@@ -1,0 +1,30 @@
+h1,
+h2 {
+  font-family: Lato;
+}
+
+.mine {
+  background-color: red;
+}
+
+table {
+  border: solid 1px #ccc;
+  text-align: center;
+}
+td {
+  border: solid 1px #ccc;
+  width: 20px;
+  height: 20px;
+}
+
+td.clicked {
+  background-color: #ddd;
+}
+
+td.mined {
+  background-color: red;
+}
+
+td.flagged {
+  background-color: green;
+}
