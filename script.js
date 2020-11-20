@@ -119,14 +119,13 @@
             this.add.text(10, 30, "YOU LOST",{fill: "#FFF", align: "center"});
           }
 
-          if(this.state.state == gameState.WIN || this.state.state == gameState.LOST) {
-            const clickButton = this.add.text(10, 50, 'Restart', { fill: '#0f0' })
-              .setInteractive()
-              .on('pointerdown', () => {
-                this.scene.restart();
-              })
+        const clickButton = this.add.text(10, 50, 'Restart', { fill: '#0f0' })
+            .setInteractive()
+            .on('pointerdown', () => {
+            this.scene.restart();
+        })
 
-          }
+          
           
         }
 
