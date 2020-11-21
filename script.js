@@ -19,7 +19,7 @@
         }
 
         draw() {
-          let x = 200;
+          let x = 140;
           let y = 100;
           let change = 26;
           let currentFlags = "";
@@ -97,7 +97,7 @@
             // Change row.
             if(i % 10 == 0) {
               y = y + change;
-              x = 200;
+              x = 140;
             }
 
           }
@@ -122,8 +122,9 @@
         const clickButton = this.add.text(10, 50, 'Restart', { fill: '#0f0' })
             .setInteractive()
             .on('pointerdown', () => {
-            this.scene.restart();
-        })
+                this.scene.restart();
+                this.minePositions = this.generateMinePositions(10);
+            })
 
           
           
@@ -146,6 +147,7 @@
 
         create ()
         {
+            console.log("create")
           this.input.mouse.disableContextMenu();
           this.state.state = gameState.PLAYING;
           for (let i = 1; i <= this.tiles; i++) {
@@ -300,9 +302,10 @@
 
       var config = {
           type: Phaser.AUTO,
-          width: 800,
+          width: 512,
           height: 600,
-          scene: [Scene]
+          scene: [Scene],
+          parent: 'game',
       };
 
       var game = new Phaser.Game(config);
