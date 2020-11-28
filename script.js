@@ -5,73 +5,88 @@ const gameState = {
 };
 
 class Scene extends Phaser.Scene {
+  boardSize = 100;
   state = {};
-  tiles = 100;
+  tiles = [];
   minePositions = [];
   excluded = [];
   flags = 10;
   flagtext = "";
+  numberOfMines = 0;
+  tileSize = 26;
+  boardPosition ={
+    x: 140,
+    y: 100
+  }
+  contactTiles = {
+    full: [1,-1, 9, -9, 10, -10, 11, -11],
+    left: [1, -9, 10, -10, 11],
+    right: [-1, 9, 10, -10, -11]
+  }
 
   constructor() {
     super();
-    this.minePositions = this.generateMinePositions(10);
+    this.numberOfMines = 10;
+  }
+
+  initialize() {
+    this.state = gameState.PLAYING;
+    this.minePositions = this.generateMinePositions(this.numberOfMines);
+
+    this.add.text(10, 50, 'Restart', { fill: '#0f0' })
+      .setInteractive()
+      .on('pointerdown', () => {
+          this.scene.restart();
+          this.minePositions = this.generateMinePositions(10);
+      })
   }
 
   draw() {
-    let x = 140;
-    let y = 100;
-    let change = 26;
+    let currentX = this.boardPosition.x;
+    let currentY = this.boardPosition.y;
     let currentFlags = "";
 
-    for (let i = 1; i <= this.tiles; i++) {
+    for (let i = 1; i <= this.boardSize; i++) {
 
-      if (this.state[i]["clicked"] === true) {
-        this.add.image(x, y, 'gray-tile')
-        if (this.state[i]["close"] !== 0) {
-          this.add.text(x-4, y-7, this.state[i]["close"],{fill: "#000", align: "center"});
+      if (this.tiles[i]["clicked"] === true) {
+        this.add.image(currentX, currentY, 'gray-tile')
+        if (this.tiles[i]["close"] !== 0) {
+          this.add.text(currentX-4, currentY-7, this.tiles[i]["close"],{fill: "#000", align: "center"});
         } 
         
       } else {
-        this.add.image(x, y, 'white-tile')
+        this.add.image(currentX, currentY, 'white-tile')
         .setInteractive()
         .on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, 
           (pointer) => {
-            if (this.state.state == gameState.LOST) {
-              return false;
-            }
-
-            if( this.state.state == gameState.WIN){
+            if (this.state == gameState.LOST || this.state == gameState.WIN) {
               return false;
             }
 
             if( pointer.button == 0) {
                 
-              if (this.state[i]["clicked"] === true) {
+              if (this.tiles[i]["clicked"] === true || this.tiles[i]["flag"] === true) {
                 return false;
               }
 
-              if (this.state[i]["flag"] === true) {
-                return false;
-              }
-
-              if (this.state[i]["mine"] === true) {
-                this.state.state = gameState.LOST;
+              if (this.tiles[i]["mine"] === true) {
+                this.state = gameState.LOST;
               }
 
               this.zeroTiles(i);
 
-              this.state[i]["clicked"] = true;
+              this.tiles[i]["clicked"] = true;
 
             } else if(pointer.button == 2) {
-              if (this.state[i]["clicked"] === true) {
+              if (this.tiles[i]["clicked"] === true) {
                 return false;
               }
               
-              if (this.flags <= 0 &&  !this.state[i]["flag"] == true) {
+              if (this.flags <= 0 &&  !this.tiles[i]["flag"] == true) {
                 return false;
               }
 
-              this.state[i]["flag"] = !this.state[i][
+              this.tiles[i]["flag"] = !this.tiles[i][
                 "flag"
               ];
             }
@@ -82,21 +97,21 @@ class Scene extends Phaser.Scene {
       }
 
       if (
-        this.state.state == gameState.LOST &&
-        this.state[i]["mine"] === true
+        this.state == gameState.LOST &&
+        this.tiles[i]["mine"] === true
       ) {
-        this.add.image(x, y, 'mine-tile')
+        this.add.image(currentX, currentY, 'mine-tile')
       }
-      if (this.state[i]["flag"] === true) {
-        this.add.image(x, y, 'banner')
+      if (this.tiles[i]["flag"] === true) {
+        this.add.image(currentX, currentY, 'banner')
         currentFlags++;
       }
-      x = x + change;
+      currentX = currentX + this.tileSize;
 
       // Change row.
       if(i % 10 == 0) {
-        y = y + change;
-        x = 140;
+        currentY = currentY + this.tileSize;
+        currentX = this.boardPosition.x;
       }
 
     }
@@ -110,20 +125,13 @@ class Scene extends Phaser.Scene {
     this.flagtext = this.add.text(10, 10, "Flags: " + this.flags,{fill: "#FFF", align: "center"});
     
     if (this.checkWin()) {
-      this.state.state = gameState.WIN;
+      this.state = gameState.WIN;
       this.add.text(10, 30, "YOU WON",{fill: "#FFF", align: "center"});
     }
 
-    if(this.state.state == gameState.LOST) {
+    if(this.state == gameState.LOST) {
       this.add.text(10, 30, "YOU LOST",{fill: "#FFF", align: "center"});
     }
-
-  const clickButton = this.add.text(10, 50, 'Restart', { fill: '#0f0' })
-      .setInteractive()
-      .on('pointerdown', () => {
-          this.scene.restart();
-          this.minePositions = this.generateMinePositions(10);
-      })
   }
 
   zeroTiles(item) {
@@ -143,55 +151,49 @@ class Scene extends Phaser.Scene {
 
   create ()
   {
-      console.log("create")
     this.input.mouse.disableContextMenu();
-    this.state.state = gameState.PLAYING;
-    for (let i = 1; i <= this.tiles; i++) {
-      this.state[i] = {};
+    this.initialize();
+    
+   
+    for (let i = 1; i <= this.boardSize; i++) {
+      this.tiles[i] = {};
 
       if (this.minePositions.indexOf(i) !== -1) {
-        this.state[i]["mine"] = true;
+        this.tiles[i]["mine"] = true;
       }
       
     }
 
-    for (let i = 1; i <= this.tiles; i++) {
+    for (let i = 1; i <= this.boardSize; i++) {
       let number = this.tilesUntilMine(i);
-      this.state[i]["close"] = number;
+      this.tiles[i]["close"] = number;
     }
     this.draw();     
   }
 
-  update ()
-  {
-  }
-
   discoverZeros(item) {
-    let rightSide = [-1, -10, -11, 10, 9];
-    let leftSide = [1, 10, 11, -10, -9];
-    let general = [1, 10, 11, -1, -10, -11, -9, 9];
     let positionsToOpen = [];
 
     if (item % 10 == 0) {
-      rightSide.forEach(element => {
+      this.contactTiles.right.forEach(element => {
         if (element + item < 100 && element + item > 1) {
-          if (this.state[item].close === 0 && this.state[item].mine !== true) {
+          if (this.tiles[item].close === 0 && this.tiles[item].mine !== true) {
             positionsToOpen.push(element + item);
           }
         }
       });
     } else if (item % 10 == 1) {
-      leftSide.forEach(element => {
+      this.contactTiles.left.forEach(element => {
         if (element + item <= 100 && element + item >= 1) {
-          if (this.state[item].close === 0 && this.state[item].mine !== true) {
+          if (this.tiles[item].close === 0 && this.tiles[item].mine !== true) {
             positionsToOpen.push(element + item);
           }
         }
       });
     } else {
-      general.forEach(element => {
+      this.contactTiles.full.forEach(element => {
         if (element + item <= 100 && element + item >= 1) {
-          if (this.state[item].close === 0 && this.state[item].mine !== true) {
+          if (this.tiles[item].close === 0 && this.tiles[item].mine !== true) {
             positionsToOpen.push(element + item);
           }
         }
@@ -199,9 +201,9 @@ class Scene extends Phaser.Scene {
     }
 
     positionsToOpen.forEach(element => {
-      if (this.state[element].clicked !== true) {
-        this.state[element].clicked = true;
-        this.state[element]["flag"] = false;
+      if (this.tiles[element].clicked !== true) {
+        this.tiles[element].clicked = true;
+        this.tiles[element]["flag"] = false;
         this.discoverZeros(element);
       }
     });
@@ -218,36 +220,15 @@ class Scene extends Phaser.Scene {
 
     this.minePositions.forEach(element => {
       if (i % 10 == 0) {
-        if (
-          element - i == -1 ||
-          element - i == -10 ||
-          element - i == -11 ||
-          element - i == 10 ||
-          element - i == 9
-        ) {
+        if (this.contactTiles.right.includes(element - i)) {
           number++;
         }
       } else if (i % 10 == 1) {
-        if (
-          element - i == 1 ||
-          element - i == 10 ||
-          element - i == 11 ||
-          element - i == -10 ||
-          element - i == -9
-        ) {
+        if (this.contactTiles.left.includes(element - i)) {
           number++;
         }
       } else {
-        if (
-          element - i == 1 ||
-          element - i == 10 ||
-          element - i == 11 ||
-          element - i == -1 ||
-          element - i == -10 ||
-          element - i == -11 ||
-          element - i == -9 ||
-          element - i == 9
-        ) {
+        if (this.contactTiles.full.includes(element - i)) {
           number++;
         }
       }
@@ -257,19 +238,10 @@ class Scene extends Phaser.Scene {
   }
 
   checkWin() {
-    let clicked = 0;
-    let correct = 0;
-    for (let i = 1; i <= this.tiles; i++) {
-      if (this.state[i]["clicked"] === true) {
-        clicked++;
-      }
+    const correct = this.tiles.filter(tile => tile.flag === true && tile.mine === true).length;
+    const open = this.tiles.filter(tile => tile.clicked === true).length;
 
-      if (this.state[i]["flag"] === true && this.state[i]["mine"] === true) {
-        correct++;
-      }
-    }
-
-    if (clicked == 90 && correct == 10) return true;
+    if (open == 90 && correct == 10) return true;
 
     return false;
   }
