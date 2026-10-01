@@ -1,0 +1,34 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - nvm install "$(cat .nvmrc)"
+        - nvm use "$(cat .nvmrc)"
+        - node --version
+        - SKIP_INSTALL_SIMPLE_GIT_HOOKS=1 npm ci
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+  customHeaders:
+    # Never cache the service worker or the entry page, so new deploys reach players.
+    - pattern: 'sw.js'
+      headers:
+        - key: Cache-Control
+          value: no-cache
+    - pattern: 'index.html'
+      headers:
+        - key: Cache-Control
+          value: no-cache
+    # Vite fingerprints everything in assets/, so it can be cached forever.
+    - pattern: 'assets/**'
+      headers:
+        - key: Cache-Control
+          value: public, max-age=31536000, immutable

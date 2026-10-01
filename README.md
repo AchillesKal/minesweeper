@@ -17,7 +17,7 @@ A from-scratch rewrite of my 2020 Phaser experiment. It uses TypeScript and Vite
 
 ## Getting started
 
-Requires Node 22 (see `.nvmrc`).
+Requires Node 24 (see `.nvmrc`).
 
 ```bash
 npm install            # also installs git hooks
@@ -60,5 +60,5 @@ The solver is deliberately human-level. It uses single-cell rules, pairwise over
 - **Biome** for linting, formatting and import sorting. A pre-commit hook runs it on staged files.
 - **Pre-push hook** runs the typecheck and unit tests.
 - **CI on every push and PR** runs lint, typecheck, unit tests with coverage thresholds, build, and e2e.
-- **Deploys to GitHub Pages** from `main` after the same checks pass. Enable Pages with "GitHub Actions" as the source.
+- **Deploys with AWS Amplify Hosting** from `main` to [minesweeper.achilleskal.com](https://minesweeper.achilleskal.com). The build is defined in `amplify.yml`: Node from `.nvmrc`, `npm ci` without git hooks, `npm run build`, and cache headers that keep `sw.js` and `index.html` fresh while hashed `assets/` are cached forever. The app's build image must be **Amazon Linux 2023**. "Redeploy this version" in the Amplify console can't rebuild commits from before the repo was replaced; push a new commit instead.
 - **Dependabot** opens grouped weekly npm updates and monthly Actions updates.
