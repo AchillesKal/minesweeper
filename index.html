@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Minesweeper</title>
+  <meta name="description" content="Minesweeper with no-guess boards, a daily puzzle, and plenty of boom.">
+  <meta name="theme-color" content="#3448d6">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6.5 3v18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M7.5 3.5c4 0 5 2 11 1.5l-2.2 4.2 2.2 4.3c-6 .5-7-1.5-11-1.5z" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-mine" viewBox="0 0 24 24"><g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 1.8v3.7M12 18.5v3.7M1.8 12h3.7M18.5 12h3.7M4.8 4.8l2.6 2.6M16.6 16.6l2.6 2.6M4.8 19.2l2.6-2.6M16.6 7.4l2.6-2.6"/></g><circle cx="12" cy="12" r="6.6" fill="currentColor"/><circle cx="9.7" cy="9.7" r="1.8" fill="#fff" opacity=".75"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21.2h4M12 2.8a6.2 6.2 0 0 0-3.6 11.2c.6.5 1 1.2 1 2h5.2c0-.8.4-1.5 1-2A6.2 6.2 0 0 0 12 2.8z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 9v4l2.5 2M9.5 2.5h5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M15.5 9a4.5 4.5 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M16 9.5l5 5M21 9.5l-5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  </svg>
+
+  <main class="wrap">
+    <header class="top">
+      <h1>Minesweeper</h1>
+      <button type="button" class="icon-btn" id="mute" aria-pressed="true" aria-label="Turn sound off"></button>
+    </header>
+
+    <nav class="modes" id="modes" aria-label="Game mode"></nav>
+
+    <div class="bar">
+      <div class="pill" title="Mines minus flags placed"><svg aria-hidden="true"><use href="#i-flag"/></svg><b id="mines">10</b><span class="sr">mines left</span></div>
+      <div class="pill" title="Time, including hint penalties"><svg aria-hidden="true"><use href="#i-clock"/></svg><b id="time">0:00</b><span class="sr">elapsed</span></div>
+      <div class="grow"></div>
+      <button type="button" class="btn" id="flagMode" aria-pressed="false" title="Taps place flags instead of digging (F)"><svg aria-hidden="true"><use href="#i-flag"/></svg>Flag mode</button>
+      <button type="button" class="btn" id="hint" title="Open a safe tile for a 10 second penalty (H)"><svg aria-hidden="true"><use href="#i-bulb"/></svg>Hint</button>
+      <button type="button" class="btn key" id="newGame" title="Start a new board (N)">New game</button>
+    </div>
+
+    <div class="scroll" id="scroll">
+      <div class="tray" id="tray">
+        <section class="board" id="board" aria-label="Minefield"></section>
+      </div>
+    </div>
+    <p class="status" id="status" aria-live="polite"></p>
+    <noscript><p class="status">Minesweeper needs JavaScript to run.</p></noscript>
+
+    <footer class="foot">
+      <label class="switch">
+        <input type="checkbox" id="noGuess">
+        <span class="track" aria-hidden="true"></span>
+        <span><b>No-guess boards</b><br>Every board can be cleared by logic alone, so you never face a coin flip.</span>
+      </label>
+      <p id="stats"></p>
+      <p class="help">Right-click or long-press to flag. Click a number when its flags are placed to open the tiles around it.
+        Keys: arrows move, <kbd>Space</kbd> digs, <kbd>F</kbd> flags, <kbd>H</kbd> hint, <kbd>N</kbd> new game, <kbd>M</kbd> sound.</p>
+    </footer>
+  </main>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

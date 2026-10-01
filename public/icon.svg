@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img">
+  <title>Minesweeper</title>
+  <rect width="512" height="512" rx="112" fill="#3448d6"/>
+  <rect x="96" y="96" width="320" height="320" rx="72" fill="#ffffff"/>
+  <rect x="96" y="380" width="320" height="36" rx="18" fill="#b6bdf2"/>
+  <g stroke="#18205a" stroke-width="26" stroke-linecap="round">
+    <path d="M256 150v40M256 322v40M150 256h40M322 256h40M181 181l28 28M303 303l28 28M181 331l28-28M303 209l28-28"/>
+  </g>
+  <circle cx="256" cy="256" r="72" fill="#18205a"/>
+  <circle cx="232" cy="232" r="18" fill="#fff" opacity=".75"/>
+</svg>
